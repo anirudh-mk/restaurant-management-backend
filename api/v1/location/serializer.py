@@ -1,3 +1,5 @@
+import uuid
+
 from rest_framework import serializers
 
 from db.models import Country, State, District
@@ -40,8 +42,12 @@ class DistrictSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
-    def validated_name(self, name):
+    def create(self, validated_data):
+        validated_data['id'] = uuid.uuid4()
+        return District.objects.create(**validated_data)
+
+    def validate_name(self, name):
         state = self.initial_data.get('state')
-        if State.objects.filter(name=name, state=state).exists():
+        if District.objects.filter(name=name, state=state).exists():
             raise serializers.ValidationError('District already exists')
         return name

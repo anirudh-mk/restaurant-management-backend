@@ -88,13 +88,13 @@ class Restaurant(models.Model):
         return self.name
 
 
-class Catogery(models.Model):
+class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'catogery'
+        db_table = 'category'
 
     def __str__(self):
         return self.name
@@ -106,15 +106,20 @@ class Food(models.Model):
     description = models.CharField(max_length=1000)
     price = models.IntegerField()
     rating = models.IntegerField()
-    resturent = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='food_resturent')
-    catogery = models.ForeignKey(Catogery, on_delete=models.DO_NOTHING, related_name='food_catogery')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='food_resturent')
+    catogery = models.ForeignKey(
+        Category,
+        on_delete=models.DO_NOTHING,
+        related_name='food_category',
+        related_query_name='food_category_query'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'food'
 
     def __str__(self):
-        return f"food:{self.name} resturent:{self.resturent.name}"
+        return f"food:{self.name} resturent:{self.restaurant.name}"
 
 
 class Igredients(models.Model):

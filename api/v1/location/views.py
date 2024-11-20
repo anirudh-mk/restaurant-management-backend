@@ -35,8 +35,7 @@ class CountryAPI(APIView):
 
 
 class StateAPI(APIView):
-    def get(self, request):
-        country_id = request.GET.get('country_id')
+    def get(self, request, country_id=None):
         state_instance = State.objects.filter(country=country_id)
         serializer = StateSerializer(state_instance, many=True)
         return Response(serializer.data)
@@ -66,8 +65,7 @@ class StateAPI(APIView):
 
 
 class DistrictAPI(APIView):
-    def get(self, request):
-        state_id = request.GET.get('state_id')
+    def get(self, request, state_id=None):
         district_instance = District.objects.filter(state=state_id)
         serializer = DistrictSerializer(district_instance, many=True)
         return Response(serializer.data)
