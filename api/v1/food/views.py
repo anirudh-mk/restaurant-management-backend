@@ -10,7 +10,7 @@ class CategoryAPI(APIView):
         if resturent_id:
             category_instance = Category.objects.filter(
                 food_category_query__restaurant__id=resturent_id
-            )
+            ).distinct()
             serializer = CategorySerializer(category_instance, many=True)
             return Response(serializer.data)
 
