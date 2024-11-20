@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from db.models import Country, State
+from db.models import Country, State, District
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -20,5 +20,16 @@ class StateSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'country',
+            'created_at'
+        ]
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = [
+            'id',
+            'name',
+            'state',
             'created_at'
         ]

@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
-from db.models import Country, State
+from db.models import Country, State, District
 from rest_framework.response import Response
-from .serializer import CountrySerializer, StateSerializer
+from .serializer import CountrySerializer, StateSerializer, DistrictSerializer
 
 
 class CountryAPI(APIView):
@@ -63,3 +63,34 @@ class StateAPI(APIView):
             state_instance.delete()
             return Response("State deleted successfully")
         return Response("State not found")
+
+
+class DistrictAPI(APIView):
+    def get(self, request):
+        state_id = request.GET.get('state_id')
+        district_instance = District.objects.filter(state=state_id)
+        serializer = DistrictSerializer(district_instance, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = DistrictSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("District created successfully")
+        return Response(serializer.errors)
+
+    def patch(self, request, pk):
+        district_instance = District.objects.filter(pk=pk).first()
+        if not district_instance:
+            return Response("District not found")
+        serializer = DistrictSerializer(district_instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("District edited successfully")
+        return Response(serializer.errors())
+
+    def delete(self, request, pk):
+        if district_instance := District.objects.filter(pk=pk).first():
+            district_instance.delete()
+            return Response("District deleted successfully")
+        return Response("District not found")
