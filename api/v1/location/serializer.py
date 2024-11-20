@@ -23,6 +23,12 @@ class StateSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
+    def validate_name(self, name):
+        country = self.initial_data.get('country')
+        if State.objects.filter(name=name, country=country).exists():
+            raise serializers.ValidationError('State already exists')
+        return name
+
 
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,3 +39,9 @@ class DistrictSerializer(serializers.ModelSerializer):
             'state',
             'created_at'
         ]
+
+    def validated_name(self, name):
+        state = self.initial_data.get('state')
+        if State.objects.filter(name=name, state=state).exists():
+            raise serializers.ValidationError('District already exists')
+        return name
