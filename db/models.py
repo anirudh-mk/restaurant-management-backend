@@ -36,7 +36,7 @@ class User(AbstractUser):
 
 class Country(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
