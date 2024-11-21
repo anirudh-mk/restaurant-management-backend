@@ -1,6 +1,5 @@
 from rest_framework.views import APIView
 from db.models import Country, State, District
-from rest_framework.response import Response
 
 from utils.response import CustomResponse
 from .serializer import CountrySerializer, StateSerializer, DistrictSerializer
@@ -52,7 +51,7 @@ class StateAPI(APIView):
     def patch(self, request, pk):
         state_instance = State.objects.filter(pk=pk).first()
         if not state_instance:
-            return CustomResponse(general_message='state not found').get_failure_response()
+            return CustomResponse(general_message='State not found').get_failure_response()
         serializer = StateSerializer(state_instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -76,13 +75,13 @@ class DistrictAPI(APIView):
         serializer = DistrictSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return CustomResponse(general_message='State created successfully').get_success_response()
+            return CustomResponse(general_message='District created successfully').get_success_response()
         return CustomResponse(response=serializer.errors).get_failure_response()
 
     def patch(self, request, pk):
         district_instance = District.objects.filter(pk=pk).first()
         if not district_instance:
-            return CustomResponse(general_message='district not found').get_failure_response()
+            return CustomResponse(general_message='District not found').get_failure_response()
         serializer = DistrictSerializer(district_instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -92,5 +91,5 @@ class DistrictAPI(APIView):
     def delete(self, request, pk):
         if district_instance := District.objects.filter(pk=pk).first():
             district_instance.delete()
-            return CustomResponse(general_message='district deleted successfully').get_success_response()
-        return CustomResponse(general_message='district not found').get_failure_response()
+            return CustomResponse(general_message='District deleted successfully').get_success_response()
+        return CustomResponse(general_message='District not found').get_failure_response()
