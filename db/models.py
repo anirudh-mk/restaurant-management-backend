@@ -103,7 +103,6 @@ class Category(models.Model):
 class Food(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)
     name = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='uploads/images/food/', default='uploads/images/food/default.jpg')
     description = models.CharField(max_length=1000)
     price = models.IntegerField()
     rating = models.IntegerField()
@@ -114,7 +113,7 @@ class Food(models.Model):
         related_name='food_category',
         related_query_name='food_category_query'
     )
-    isVeg = models.BooleanField(default=True)
+    is_veg = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -122,6 +121,13 @@ class Food(models.Model):
 
     def __str__(self):
         return f"food:{self.name} resturent:{self.restaurant.name}"
+
+
+class FoodImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)
+    image = models.ImageField(upload_to='uploads/images/food/')
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='food_image_food')
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Igredients(models.Model):
