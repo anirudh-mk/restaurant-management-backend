@@ -16,16 +16,21 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PopularFoodsSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+
     class Meta:
         model = Food
         fields = [
             'id',
             'name',
-            'image',
+            'images',
             'rating',
             'price',
             'is_veg',
         ]
+
+    def get_images(self, instance):
+        return instance.food_image_food.values_list('image', flat=True)
 
 
 class FoodSerializer(serializers.ModelSerializer):
@@ -47,9 +52,15 @@ class FoodSerializer(serializers.ModelSerializer):
         validated_data['id'] = uuid.uuid4()
         food_instance = Food.objects.create(**validated_data)
         images = self.context.get('images')
-        a = FoodImage.objects.bulk_create([FoodImage(
+        FoodImage.objects.bulk_create([FoodImage(
             id=uuid.uuid4(),
             image=image,
             food=food_instance,
         ) for image in images])
         return food_instance
+
+    def validate_name(self, name):
+        restaurant_id = self.initial_data.get('restaurant')
+        if Food.objects.filter(name=name, restaurant=restaurant_id).exists():
+            raise serializers.ValidationError('Food already exists')
+        return name

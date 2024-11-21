@@ -47,7 +47,7 @@ class CategoryAPI(APIView):
 
 class PopularFoodsAPI(APIView):
     def get(self, request, restaurant_id=None):
-        food_instance = Food.objects.filter(restaurant=restaurant_id, rating__gte=4)
+        food_instance = Food.objects.filter(restaurant=restaurant_id, rating__gte=4).order_by('-rating')
         serializer = PopularFoodsSerializer(food_instance, many=True)
         return CustomResponse(response=serializer.data).get_success_response()
 
