@@ -1,16 +1,16 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.v1.food.serializer import CategorySerializer
+from api.v1.food.serializer import CategorySerializer, PopularFoodsSerializer
 from db.models import Food, Category
 from utils.response import CustomResponse
 
 
 class CategoryAPI(APIView):
-    def get(self, request, resturent_id=None):
-        if resturent_id:
+    def get(self, request, restaurant_id=None):
+        if restaurant_id:
             category_instance = Category.objects.filter(
-                food_category_query__restaurant__id=resturent_id
+                food_category_query__restaurant__id=restaurant_id
             ).distinct()
 
             serializer = CategorySerializer(category_instance, many=True)
@@ -43,3 +43,10 @@ class CategoryAPI(APIView):
             category_instance.delete()
             return CustomResponse(general_message="Category deleted successfully").get_success_response()
         return CustomResponse(general_message="Category not found").get_failure_response()
+
+
+class PopularFoodsAPI(APIView):
+    def get(self, request, restaurant_id=None):
+        food_instance = Food.objects.filter(restaurant=restaurant_id, rating__gte=4)
+        serializer = PopularFoodsSerializer(food_instance, many=True)
+        return CustomResponse(response=serializer.data).get_success_response()

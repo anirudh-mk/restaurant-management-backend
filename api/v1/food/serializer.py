@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from db.models import Category
+from db.models import Category, Food
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -10,4 +10,17 @@ class CategorySerializer(serializers.ModelSerializer):
             'id',
             'name',
             'created_at',
+        ]
+
+
+class PopularFoodsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Food
+        fields = [
+            'id',
+            'name',
+            'image',
+            'rating',
+            'price',
+            'isVeg',
         ]

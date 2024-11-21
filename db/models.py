@@ -103,6 +103,7 @@ class Category(models.Model):
 class Food(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)
     name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='uploads/images/food/', default='uploads/images/food/default.jpg')
     description = models.CharField(max_length=1000)
     price = models.IntegerField()
     rating = models.IntegerField()
@@ -113,6 +114,7 @@ class Food(models.Model):
         related_name='food_category',
         related_query_name='food_category_query'
     )
+    isVeg = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
