@@ -18,6 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class PopularFoodsSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
+    ingredients = serializers.SerializerMethodField()
 
     class Meta:
         model = Food
@@ -28,10 +29,14 @@ class PopularFoodsSerializer(serializers.ModelSerializer):
             'rating',
             'price',
             'is_veg',
+            'ingredients'
         ]
 
     def get_images(self, instance):
         return instance.food_image_food.values_list('image', flat=True)
+
+    def get_ingredients(self, instance):
+        return instance.food_ingredients_link_food.values_list('ingredient__name', flat=True)
 
 
 class FoodSerializer(serializers.ModelSerializer):
