@@ -129,6 +129,12 @@ class FoodImage(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='food_image_food')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'food_image'
+
+    def __str__(self):
+        return f"food:{self.food.name} image:{self.image}"
+
 
 class Igredients(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)

@@ -71,7 +71,7 @@ class FoodAPI(APIView):
         serializer = FoodSerializer(
             data=request.data,
             context={
-                'images': request.FILES.getlist('image')
+                'request': request,
             }
         )
         if serializer.is_valid():

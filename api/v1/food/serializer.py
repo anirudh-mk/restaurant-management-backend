@@ -1,8 +1,9 @@
 import uuid
 
+from django.db import transaction
 from rest_framework import serializers
 
-from db.models import Category, Food, FoodImage
+from db.models import Category, Food, FoodImage, FoodIngredientsLink
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -49,14 +50,32 @@ class FoodSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data['id'] = uuid.uuid4()
-        food_instance = Food.objects.create(**validated_data)
-        images = self.context.get('images')
-        FoodImage.objects.bulk_create([FoodImage(
-            id=uuid.uuid4(),
-            image=image,
-            food=food_instance,
-        ) for image in images])
+        try:
+            with transaction.atomic():
+                validated_data['id'] = uuid.uuid4()
+                food_instance = Food.objects.create(**validated_data)
+                request = self.context.get('request')
+                images = request.FILES.getlist('image')
+                ingredients = request.data.get('ingredients', [])
+
+                if not isinstance(ingredients, list):
+                    ingredients = ingredients.split(',')
+
+                FoodImage.objects.bulk_create([FoodImage(
+                    id=uuid.uuid4(),
+                    image=image,
+                    food=food_instance,
+                ) for image in images])
+
+                FoodIngredientsLink.objects.bulk_create([
+                    FoodIngredientsLink(
+                        id=uuid.uuid4(),
+                        ingredient_id=ingredient,
+                        food=food_instance,
+                    ) for ingredient in ingredients
+                ])
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
         return food_instance
 
     def validate_name(self, name):
