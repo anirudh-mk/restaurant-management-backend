@@ -15,7 +15,7 @@ class User(AbstractUser):
     phone = None
     created_at = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -91,6 +91,7 @@ class Restaurant(models.Model):
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), max_length=36)
     name = models.CharField(max_length=200, unique=True)
+    image = models.ImageField(upload_to='uploads/images/category/')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -12,6 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'image',
             'created_at',
         ]
 

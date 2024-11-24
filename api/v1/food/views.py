@@ -53,19 +53,20 @@ class PopularFoodsAPI(APIView):
 
 
 class FoodAPI(APIView):
-    # def get(self, request, restaurant_id=None):
-    #     if restaurant_id:
-    #         category_instance = Category.objects.filter(
-    #             food_category_query__restaurant__id=restaurant_id
-    #         ).distinct()
-    #
-    #         serializer = CategorySerializer(category_instance, many=True)
-    #
-    #         return CustomResponse(response=serializer.data).get_success_response()
-    #
-    #     category_instance = Category.objects.all()
-    #     serializer = CategorySerializer(category_instance, many=True)
-    #     return CustomResponse(response=serializer.data).get_success_response()
+    def get(self, request, restaurant_id=None, food_id=None):
+        if restaurant_id:
+            food_instance = Food.objects.filter(
+                restaurant=restaurant_id
+            )
+            serializer = FoodSerializer(food_instance, many=True)
+            return CustomResponse(response=serializer.data).get_success_response()
+
+        if food_id:
+            food_instance = Food.objects.filter(
+                id=food_id
+            )
+            serializer = FoodSerializer(food_instance, many=False)
+            return CustomResponse(response=serializer.data).get_success_response()
 
     def post(self, request):
         serializer = FoodSerializer(
